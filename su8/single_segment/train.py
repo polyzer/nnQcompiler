@@ -1,17 +1,17 @@
 
 import os
 from data_utils import load_data
-from keras.layers.core import Dense, Activation, Dropout, Flatten, Merge
-from keras.models import Sequential
+# from keras.layers.core import Dense, Activation, Dropout, Flatten, Merge
+# from keras.models import Sequential
 from numpy import array
-from keras.callbacks import CSVLogger
-from tensorflow.python.ops import control_flow_ops
-from keras.callbacks import ModelCheckpoint, EarlyStopping
+from tensorflow.keras.callbacks import CSVLogger
+# from tensorflow.python.ops import control_flow_ops
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 import tensorflow as tf
-tf.python.control_flow_ops = tf
+# tf.python.control_flow_ops = tf
 
-from keras import backend as K
+# from keras import backend as K
 
 
 training_data_path = 'data_training.csv'
@@ -27,21 +27,21 @@ def custom_objective(y_true, y_pred):
 
 def main():
 
-    model = Sequential()
+    model = tf.keras.Sequential()
 
     # input dim, Re(U) represented as a vector , SU(8) length 64
     # output dim 36, 
     # single step
 
-    model.add(Dense(output_dim=2000,input_dim=64))
+    model.add(tf.keras.layers.Dense(2000,input_dim=64))
     
-    model.add(Dense(4000,activation='relu'))
-    model.add(Dropout(0.2))
+    model.add(tf.keras.layers.Dense(4000,activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.2))
     
-    model.add(Dense(4000,activation='relu'))
-    model.add(Dropout(0.2))
+    model.add(tf.keras.layers.Dense(4000,activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.2))
 
-    model.add(Dense(input_dim=4000,output_dim=36))
+    model.add(tf.keras.layers.Dense(36, input_dim=4000,))
 
     train_input, train_output = load_data(training_data_path)
     valid_input, valid_output = load_data(valid_data_path)	
@@ -52,7 +52,7 @@ def main():
     model.compile(optimizer='adam',loss=custom_objective)
     model.summary()
 
-    model.fit(train_input, train_output, validation_data=(valid_input,valid_output), nb_epoch=500, batch_size=64, callbacks=[checkpoint,csv_logger])
+    model.fit(train_input, train_output, validation_data=(valid_input,valid_output), epochs=500, batch_size=64, callbacks=[checkpoint,csv_logger])
     model.save('quant_model.h5')
     
 if __name__ == '__main__':

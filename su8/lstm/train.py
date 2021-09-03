@@ -1,15 +1,13 @@
 
 import os
 from data_utils import load_data
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers.recurrent import GRU
-from keras.callbacks import CSVLogger
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten, GRU
+from tensorflow.keras.callbacks import CSVLogger
 from numpy import array
-from tensorflow.python.ops import control_flow_ops
-from keras.callbacks import ModelCheckpoint, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 import tensorflow as tf
-
+import pdb
 # tf.python.control_flow_ops = tf
 training_data_path = 'data_training.csv'
 valid_data_path = 'data_valid.csv'
@@ -45,7 +43,7 @@ def main():
     model.add(GRU(80, return_sequences=True))
     model.add(Dropout(0.2))
     model.add(Flatten())
-    model.add(Dense(input_dim=640,output_dim=640))
+    model.add(Dense(input_dim=640,units=640))
   
     train_input, train_output = load_data(training_data_path)
     valid_input, valid_output = load_data(valid_data_path)	 
@@ -54,7 +52,8 @@ def main():
     # estop = EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')
     csv_logger = CSVLogger('training.log',separator=',', append=False)
 
-    model.compile(optimizer='Nadam',loss=custom_objective)
+    # pdb.set_trace()
+    model.compile(optimizer='adam',loss=custom_objective)
     model.summary()
 
     model.fit(train_input, train_output, validation_data=(valid_input,valid_output), epochs=5000, batch_size=64, callbacks=[checkpoint, csv_logger])
